@@ -2,14 +2,13 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
-import {fileUrlToPath} from 'url';
+import {fileURLToPath} from 'url';
 import {dirname, join} from 'path';
 import {engine} from 'express-handlebars';
-import { title } from 'process';
 
 dotenv.config();
 
-const __filename = fileUrlToPath(import.meta.url);
+const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const app = express();
@@ -19,13 +18,13 @@ mongoose.connect(process.env.MONGODB_URI)
 .then(console.log('MongoDB connected'))
 .catch((err) => console.log(err));
 
-app.engine("hbs", engine({
+app.engine(".hbs", engine({
     extname: ".hbs",
     defaultLayout: "main",
     layoutsDir: join(__dirname, "views/layouts"),
     partialsDir: join(__dirname, "views/partials"),
 }));
-app.set("view engine", "handlebars");
+app.set("view engine", "hbs");
 app.set("views", join(__dirname, "views"));
 
 app.use(express.json());
@@ -37,12 +36,12 @@ app.use('/src', express.static(join(__dirname, 'src')));
 
 app.get("/", (req, res) => {
     res.render('pages/home', {
-        title: 'Filmtivity',
+        title: 'Home',
         additionalStyles: ['home']
     });
 });
 
-app.use((req, res, next) => {
+app.use((req, res) => {
     res.status(404).render('pages/404', {
         title: 'Page Not Found',
         additionalStyles: ['error']
